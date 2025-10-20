@@ -106,6 +106,19 @@ struct GPUToXeVMPipelineOptions
       llvm::cl::init("")};
 };
 
+/// Options for the gpu to SPIR-V pipeline.
+struct GPUToSPIRVPipelineOptions
+    : public PassPipelineOptions<GPUToSPIRVPipelineOptions> {
+  PassOptions::Option<bool> enableCooperativeMatrix{
+      *this, "enable-cooperative-matrix",
+      llvm::cl::desc("Enable SPIR-V cooperative matrix operations for MMA"),
+      llvm::cl::init(true)};
+  PassOptions::Option<std::string> targetEnv{
+      *this, "target-env",
+      llvm::cl::desc("SPIR-V target environment (vulkan1.2, vulkan1.3, opencl)"),
+      llvm::cl::init("vulkan1.3")};
+};
+
 //===----------------------------------------------------------------------===//
 // Building and Registering.
 //===----------------------------------------------------------------------===//
@@ -116,6 +129,11 @@ struct GPUToXeVMPipelineOptions
 void buildLowerToNVVMPassPipeline(OpPassManager &pm,
                                   const GPUToNVVMPipelineOptions &options);
 
+/// Adds the GPU to SPIR-V pipeline to the given pass manager. Transforms GPU
+/// operations to SPIR-V with support for cooperative matrix operations.
+void buildLowerToSPIRVPassPipeline(OpPassManager &pm,
+                                   const GPUToSPIRVPipelineOptions &options);
+
 /// Adds the GPU to XeVM pipeline to the given pass manager. Transforms main
 /// dialects into XeVM targets. Begins with GPU code regions, then handles host
 /// code.
@@ -124,6 +142,7 @@ void buildLowerToXeVMPassPipeline(OpPassManager &pm,
 
 /// Register all pipelines for the `gpu` dialect.
 void registerGPUToNVVMPipeline();
+void registerGPUToSPIRVPipeline();
 void registerGPUToXeVMPipeline();
 
 } // namespace gpu

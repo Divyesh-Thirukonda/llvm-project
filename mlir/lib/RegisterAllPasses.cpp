@@ -98,5 +98,6 @@ void mlir::registerAllPasses() {
   sparse_tensor::registerSparseTensorPipelines();
   tosa::registerTosaToLinalgPipelines();
   gpu::registerGPUToNVVMPipeline();
+  gpu::registerGPUToSPIRVPipeline();
   gpu::registerGPUToXeVMPipeline();
 }
