@@ -135,6 +135,8 @@ public:
 
   virtual bool isAlwaysUniform(const Value *V) const { return false; }
 
+  virtual bool isReconvergencePoint(const Value *V) const { return false; }
+
   virtual bool isValidAddrSpaceCast(unsigned FromAS, unsigned ToAS) const {
     return false;
   }

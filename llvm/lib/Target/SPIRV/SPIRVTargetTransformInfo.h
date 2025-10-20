@@ -61,6 +61,7 @@ public:
                                           Value *NewV) const override;
 
   bool allowVectorElementIndexingUsingGEP() const override { return false; }
+  bool isReconvergencePoint(const Value *V) const override;
 };
 
 } // namespace llvm

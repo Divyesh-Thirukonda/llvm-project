@@ -65,3 +65,27 @@ bool DirectXTTIImpl::isTargetIntrinsicTriviallyScalarizable(
     return false;
   }
 }
+
+bool DirectXTTIImpl::isReconvergencePoint(const Value *V) const {
+  // Wave intrinsics that force reconvergence across the wave
+  const IntrinsicInst *Intrinsic = dyn_cast<IntrinsicInst>(V);
+  if (!Intrinsic)
+    return false;
+
+  // DirectX wave operations that force reconvergence
+  switch (Intrinsic->getIntrinsicID()) {
+  case Intrinsic::dx_wave_readlane:
+  case Intrinsic::dx_wave_reduce_max:
+  case Intrinsic::dx_wave_reduce_umax:
+  case Intrinsic::dx_wave_reduce_sum:
+  case Intrinsic::dx_wave_reduce_usum:
+  case Intrinsic::dx_wave_all:
+  case Intrinsic::dx_wave_any:
+  case Intrinsic::dx_wave_active_countbits:
+  case Intrinsic::dx_wave_is_first_lane:
+    // These operations force all lanes to participate and reconverge
+    return true;
+  default:
+    return false;
+  }
+}
