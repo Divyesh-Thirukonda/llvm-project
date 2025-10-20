@@ -465,6 +465,13 @@ public:
   // even taking non-uniform arguments
   LLVM_ABI bool isAlwaysUniform(const Value *V) const;
 
+  /// Returns whether V is a reconvergence point (e.g., wave/subgroup intrinsics).
+  ///
+  /// Reconvergence points force all lanes/threads in a wave/subgroup to 
+  /// reconverge, making subsequent operations uniform regardless of prior
+  /// divergence. This enables less conservative divergence analysis.
+  LLVM_ABI bool isReconvergencePoint(const Value *V) const;
+
   /// Query the target whether the specified address space cast from FromAS to
   /// ToAS is valid.
   LLVM_ABI bool isValidAddrSpaceCast(unsigned FromAS, unsigned ToAS) const;

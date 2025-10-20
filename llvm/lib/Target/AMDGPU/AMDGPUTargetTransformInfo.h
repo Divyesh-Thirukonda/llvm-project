@@ -176,6 +176,7 @@ public:
   bool isReadRegisterSourceOfDivergence(const IntrinsicInst *ReadReg) const;
   bool isSourceOfDivergence(const Value *V) const override;
   bool isAlwaysUniform(const Value *V) const override;
+  bool isReconvergencePoint(const Value *V) const override;
 
   bool isValidAddrSpaceCast(unsigned FromAS, unsigned ToAS) const override {
     // Address space casts must cast between different address spaces.

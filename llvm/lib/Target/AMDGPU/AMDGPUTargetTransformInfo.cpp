@@ -1119,6 +1119,30 @@ bool GCNTTIImpl::isAlwaysUniform(const Value *V) const {
   return false;
 }
 
+bool GCNTTIImpl::isReconvergencePoint(const Value *V) const {
+  // Wave/subgroup intrinsics that force reconvergence of all lanes
+  const IntrinsicInst *Intrinsic = dyn_cast<IntrinsicInst>(V);
+  if (!Intrinsic)
+    return false;
+
+  // These intrinsics operate on the full wave and force reconvergence
+  switch (Intrinsic->getIntrinsicID()) {
+  case Intrinsic::amdgcn_readfirstlane:
+  case Intrinsic::amdgcn_readlane:
+  case Intrinsic::amdgcn_ballot:
+  case Intrinsic::amdgcn_icmp:
+  case Intrinsic::amdgcn_fcmp:
+  case Intrinsic::amdgcn_wave_reduce_umin:
+  case Intrinsic::amdgcn_wave_reduce_umax:
+  case Intrinsic::amdgcn_wave_reduce_imin:
+  case Intrinsic::amdgcn_wave_reduce_imax:
+    // These operations force all lanes to participate and reconverge
+    return true;
+  default:
+    return false;
+  }
+}
+
 bool GCNTTIImpl::collectFlatAddressOperands(SmallVectorImpl<int> &OpIndexes,
                                             Intrinsic::ID IID) const {
   switch (IID) {

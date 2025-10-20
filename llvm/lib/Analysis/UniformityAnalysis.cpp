@@ -35,6 +35,9 @@ template <> void llvm::GenericUniformityAnalysisImpl<SSAContext>::initialize() {
       markDivergent(I);
     else if (TTI->isAlwaysUniform(&I))
       addUniformOverride(I);
+    // Reconvergence points force reconvergence, making subsequent ops uniform
+    else if (TTI->isReconvergencePoint(&I))
+      addUniformOverride(I);
   }
   for (auto &Arg : F.args()) {
     if (TTI->isSourceOfDivergence(&Arg)) {
