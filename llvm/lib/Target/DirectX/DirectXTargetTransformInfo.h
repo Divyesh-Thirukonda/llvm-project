@@ -39,6 +39,7 @@ public:
                                           unsigned ScalarOpdIdx) const override;
   bool isTargetIntrinsicWithOverloadTypeAtArg(Intrinsic::ID ID,
                                               int OpdIdx) const override;
+  bool isReconvergencePoint(const Value *V) const override;
 };
 } // namespace llvm
 
