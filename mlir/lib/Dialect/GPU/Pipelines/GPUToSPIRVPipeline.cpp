@@ -49,12 +49,17 @@ void buildGPUToSPIRVPipeline(
     OpPassManager &pm,
     const mlir::gpu::GPUToSPIRVPipelineOptions &options) {
   
+  // Note: The options parameter is reserved for future use to configure
+  // SPIR-V target environment and cooperative matrix optimizations.
+  // Current conversion passes use default configurations.
+  (void)options;
+  
   // Step 1: Outline GPU kernels from host code
   pm.addPass(createGpuKernelOutliningPass());
   
   // Step 2: Lower GPU operations to SPIR-V
-  // This includes mapping gpu.subgroup_mma_* operations to 
-  // spirv.KHR.CooperativeMatrix* operations
+  // This includes mapping gpu.subgroup_mma_* operations to
+  // spirv.KHR.CooperativeMatrix* operations when enableCooperativeMatrix is true
   pm.addPass(createConvertGPUToSPIRVPass());
   
   // Step 3: Lower other dialects to SPIR-V
@@ -81,23 +86,6 @@ void buildGPUToSPIRVPipeline(
 
 namespace mlir {
 namespace gpu {
-
-//===----------------------------------------------------------------------===//
-// Pipeline Options
-//===----------------------------------------------------------------------===//
-
-struct GPUToSPIRVPipelineOptions
-    : public PassPipelineOptions<GPUToSPIRVPipelineOptions> {
-  PassOptions::Option<bool> enableCooperativeMatrix{
-      *this, "enable-cooperative-matrix",
-      llvm::cl::desc("Enable SPIR-V cooperative matrix operations for MMA"),
-      llvm::cl::init(true)};
-  
-  PassOptions::Option<std::string> targetEnv{
-      *this, "target-env",
-      llvm::cl::desc("SPIR-V target environment (vulkan1.2, vulkan1.3, opencl)"),
-      llvm::cl::init("vulkan1.3")};
-};
 
 //===----------------------------------------------------------------------===//
 // Pipeline Registration

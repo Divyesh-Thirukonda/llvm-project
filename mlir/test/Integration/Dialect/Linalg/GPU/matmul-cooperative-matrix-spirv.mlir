@@ -3,7 +3,7 @@
 // RUN:   -split-input-file \
 // RUN: | FileCheck %s
 
-// This test demonstrates the lowering of GPU subgroup MMA operations to 
+// This test demonstrates the lowering of GPU subgroup MMA operations to
 // SPIR-V cooperative matrix operations (SPV_KHR_cooperative_matrix).
 // This is a key component of the Linalg → GPU → SPIR-V pipeline.
 
@@ -24,7 +24,6 @@ module attributes {
       %arg2: memref<16x16xf16, #spirv.storage_class<StorageBuffer>>
     ) kernel attributes {spirv.entry_point_abi = #spirv.entry_point_abi<workgroup_size = [32, 1, 1]>} {
       %c0 = arith.constant 0 : index
-      %c16 = arith.constant 16 : index
       
       // Load matrix A (16x16xf16) into MMA fragment
       // CHECK: spirv.KHR.CooperativeMatrixLoad
